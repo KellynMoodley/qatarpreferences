@@ -227,11 +227,11 @@ def get_invalid_certs(query):
     }
 
     # Start building the HTML table
-    table_html = "<table border='5'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+    table_html = "<table border='20'><tr><th>Name</th><th>Type</th><th>Description</th><th>Link</th><th>Expiration Date</th></tr>"
 
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+        table_html += f"<tr><td><td>{html.escape(cert.employeename)}<td></td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
 
     # Close the table
     table_html += "</table>"
