@@ -115,9 +115,9 @@ class CertModel(db.Model):
     __tablename__ = 'CERTIFICATIONS'
     __table_args__ = TABLE_ARGS
     id = db.Column('ID',db.Integer, primary_key=True)
-    employeename = db.Column('EMPLOYEENAME',db.String(32))
+    employeename = db.Column('EMPLOYEENAME',db.String(50))
     certificatetype = db.Column('CERTIFICATETYPE',db.String(32))
-    certificatedescription = db.Column('CERTIFICATEDESCRIPTION',db.String(50))
+    certificatedescription = db.Column('CERTIFICATEDESCRIPTION',db.String(200))
     certificatelink = db.Column('CERTIFICATELINK',db.String(1000))
     expirydate = db.Column('EXPIRYDATE', db.Date, nullable=True)
     
