@@ -245,6 +245,7 @@ def get_invalid_certs(query):
         "message": "inValid certification data retrieved successfully"
     })
 
+
 @app.get('/certifications/valid')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
@@ -267,14 +268,20 @@ def get_valid_certs(query):
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+    # Start building the HTML table with CSS for row borders
+    table_html = "<table border='1' style='border-collapse: collapse; width: 100%;'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
 
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-        # Add a line after each record
-        table_html += "<tr><td colspan='5'><hr></td></tr>"
+        table_html += (
+            "<tr style='border-bottom: 1px solid black;'>"
+            f"<td>{html.escape(cert.employeename)}</td>"
+            f"<td>{html.escape(cert.certificatetype)}</td>"
+            f"<td>{html.escape(cert.certificatedescription)}</td>"
+            f"<td>{html.escape(cert.certificatelink)}</td>"
+            f"<td>{html.escape(str(cert.expirydate))}</td>"
+            "</tr>"
+        )
 
     # Close the table
     table_html += "</table>"
@@ -288,6 +295,7 @@ def get_valid_certs(query):
         "pagination": certs_data['pagination'],
         "message": "Valid certification data retrieved successfully"
     })
+
 
     
 
