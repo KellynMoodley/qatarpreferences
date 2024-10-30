@@ -245,7 +245,6 @@ def get_invalid_certs(query):
         "message": "inValid certification data retrieved successfully"
     })
 
-
 @app.get('/certifications/valid')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
@@ -268,18 +267,25 @@ def get_valid_certs(query):
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table with CSS for row borders
-    table_html = "<table border='1' style='border-collapse: collapse; width: 100%;'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+    # Start building the HTML table with CSS for cell borders
+    table_html = (
+        "<table style='border-collapse: collapse; width: 100%;'>"
+        "<tr><th style='border: 1px solid black;'>Name</th>"
+        "<th style='border: 1px solid black;'>CertificateType</th>"
+        "<th style='border: 1px solid black;'>CertificateDescription</th>"
+        "<th style='border: 1px solid black;'>CertificateLink</th>"
+        "<th style='border: 1px solid black;'>ExpirationDate</th></tr>"
+    )
 
     # Add each valid certification to the table
     for cert in certs_data['certs']:
         table_html += (
-            "<tr style='border-bottom: 1px solid black;'>"
-            f"<td>{html.escape(cert.employeename)}</td>"
-            f"<td>{html.escape(cert.certificatetype)}</td>"
-            f"<td>{html.escape(cert.certificatedescription)}</td>"
-            f"<td>{html.escape(cert.certificatelink)}</td>"
-            f"<td>{html.escape(str(cert.expirydate))}</td>"
+            "<tr>"
+            f"<td style='border: 1px solid black;'>{html.escape(cert.employeename)}</td>"
+            f"<td style='border: 1px solid black;'>{html.escape(cert.certificatetype)}</td>"
+            f"<td style='border: 1px solid black;'>{html.escape(cert.certificatedescription)}</td>"
+            f"<td style='border: 1px solid black;'>{html.escape(cert.certificatelink)}</td>"
+            f"<td style='border: 1px solid black;'>{html.escape(str(cert.expirydate))}</td>"
             "</tr>"
         )
 
@@ -295,6 +301,7 @@ def get_valid_certs(query):
         "pagination": certs_data['pagination'],
         "message": "Valid certification data retrieved successfully"
     })
+
 
 
     
