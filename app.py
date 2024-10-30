@@ -202,7 +202,6 @@ def get_nodate_certs(query):
         "message": "Certification data retrieved successfully"
     })
 
-#get records by validity date (invalid)
 @app.get('/certifications/invalid')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
@@ -215,6 +214,63 @@ def get_invalid_certs(query):
     
     pagination = CertModel.query.filter(
         CertModel.expirydate < current_date
+    ).paginate(
+        page=query['page'],
+        per_page=query['per_page']
+    )
+    
+    certs_data = {
+        'certs': pagination.items,
+        'pagination': pagination_builder(pagination)
+    }
+
+    # Start building the HTML table with inline CSS for border
+    table_html = """
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+    </style>
+    <table>
+        <tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>
+    """
+
+    # Add each valid certification to the table
+    for cert in certs_data['certs']:
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+
+    # Close the table
+    table_html += "</table>"
+
+    # Store the table in a variable
+    valid_certs_table = table_html
+
+    # Return the table as part of a JSON response
+    return jsonify({
+        "table": valid_certs_table,
+        "pagination": certs_data['pagination'],
+        "message": "inValid certification data retrieved successfully"
+    })
+
+
+#get records by validity date
+@app.get('/certifications/valid')
+@app.output(CertOutSchema)
+@app.auth_required(auth)
+@app.input(CertQuerySchema, 'query')
+def get_valid_certs(query):
+    """Get valid certifications
+    Retrieve all certification records that have not expired (expiry date is after the current date)
+    """
+    current_date = datetime.now().date()
+    
+    pagination = CertModel.query.filter(
+        CertModel.expirydate > current_date
     ).paginate(
         page=query['page'],
         per_page=query['per_page']
@@ -242,67 +298,8 @@ def get_invalid_certs(query):
     return jsonify({
         "table": valid_certs_table,
         "pagination": certs_data['pagination'],
-        "message": "inValid certification data retrieved successfully"
-    })
-
-@app.get('/certifications/valid')
-@app.output(CertOutSchema)
-@app.auth_required(auth)
-@app.input(CertQuerySchema, 'query')
-def get_valid_certs(query):
-    """Get valid certifications
-    Retrieve all certification records that have not expired (expiry date is after the current date)
-    """
-    current_date = datetime.now().date()
-    
-    pagination = CertModel.query.filter(
-        CertModel.expirydate > current_date
-    ).paginate(
-        page=query['page'],
-        per_page=query['per_page']
-    )
-    
-    certs_data = {
-        'certs': pagination.items,
-        'pagination': pagination_builder(pagination)
-    }
-
-    # Start building the HTML table with CSS for cell borders
-    table_html = (
-        "<table style='border-collapse: collapse; width: 100%;'>"
-        "<tr><th style='border: 1px solid black;'>Name</th>"
-        "<th style='border: 1px solid black;'>CertificateType</th>"
-        "<th style='border: 1px solid black;'>CertificateDescription</th>"
-        "<th style='border: 1px solid black;'>CertificateLink</th>"
-        "<th style='border: 1px solid black;'>ExpirationDate</th></tr>"
-    )
-
-    # Add each valid certification to the table
-    for cert in certs_data['certs']:
-        table_html += (
-            "<tr>"
-            f"<td style='border: 1px solid black;'>{html.escape(cert.employeename)}</td>"
-            f"<td style='border: 1px solid black;'>{html.escape(cert.certificatetype)}</td>"
-            f"<td style='border: 1px solid black;'>{html.escape(cert.certificatedescription)}</td>"
-            f"<td style='border: 1px solid black;'>{html.escape(cert.certificatelink)}</td>"
-            f"<td style='border: 1px solid black;'>{html.escape(str(cert.expirydate))}</td>"
-            "</tr>"
-        )
-
-    # Close the table
-    table_html += "</table>"
-
-    # Store the table in a variable
-    valid_certs_table = table_html
-
-    # Return the table as part of a JSON response
-    return jsonify({
-        "table": valid_certs_table,
-        "pagination": certs_data['pagination'],
         "message": "Valid certification data retrieved successfully"
     })
-
-
 
     
 
