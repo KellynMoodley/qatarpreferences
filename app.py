@@ -202,6 +202,7 @@ def get_nodate_certs(query):
         "message": "Certification data retrieved successfully"
     })
 
+
 @app.get('/certifications/invalid')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
@@ -210,8 +211,10 @@ def get_invalid_certs(query):
     """Get invalid certifications
     Retrieve all certification records that have expired (expiry date is before or the current date)
     """
+    # Current date for checking expiry
     current_date = datetime.now().date()
     
+    # Query to fetch expired certifications based on pagination
     pagination = CertModel.query.filter(
         CertModel.expirydate < current_date
     ).paginate(
@@ -219,12 +222,13 @@ def get_invalid_certs(query):
         per_page=query['per_page']
     )
     
+    # Organize certification data with pagination info
     certs_data = {
         'certs': pagination.items,
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table with inline CSS for border
+    # Start building the HTML table with inline CSS for border styling
     table_html = """
     <style>
     table, th, td {
@@ -240,21 +244,21 @@ def get_invalid_certs(query):
         <tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>
     """
 
-    # Add each valid certification to the table
+    # Populate the table with certification data
     for cert in certs_data['certs']:
         table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
 
     # Close the table
     table_html += "</table>"
 
-    # Store the table in a variable
+    # Store the completed table in a variable
     valid_certs_table = table_html
 
     # Return the table as part of a JSON response
     return jsonify({
         "table": valid_certs_table,
         "pagination": certs_data['pagination'],
-        "message": "inValid certification data retrieved successfully"
+        "message": "Invalid certification data retrieved successfully"
     })
 
 
