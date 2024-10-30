@@ -226,33 +226,15 @@ def get_invalid_certs(query):
         'pagination': pagination_builder(pagination)
     }
 
-      # Start building the HTML table with improved spacing
-   table_html = """
-   <table border='1' style='border-collapse: collapse; width: 100%;'>
-     <tr>
-        <th style='padding: 8px; text-align: left;'>Name</th>
-        <th style='padding: 8px; text-align: left;'>Certificate Type</th>
-        <th style='padding: 8px; text-align: left;'>Certificate Description</th>
-        <th style='padding: 8px; text-align: left;'>Certificate Link</th>
-        <th style='padding: 8px; text-align: left;'>Expiration Date</th>
-    </tr>
-  """
+    # Start building the HTML table
+    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
 
-  # Add each valid certification to the table with the same padding style for cells
-  for cert in certs_data['certs']:
-    table_html += f"""
-    <tr>
-        <td style='padding: 8px;'>{html.escape(cert.employeename)}</td>
-        <td style='padding: 8px;'>{html.escape(cert.certificatetype)}</td>
-        <td style='padding: 8px;'>{html.escape(cert.certificatedescription)}</td>
-        <td style='padding: 8px;'>{html.escape(cert.certificatelink)}</td>
-        <td style='padding: 8px;'>{html.escape(str(cert.expirydate))}</td>
-    </tr>
-    """
+    # Add each valid certification to the table
+    for cert in certs_data['certs']:
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
 
-  # Close the table
-   table_html += "</table>"
-
+    # Close the table
+    table_html += "</table>"
 
     # Store the table in a variable
     valid_certs_table = table_html
@@ -263,8 +245,6 @@ def get_invalid_certs(query):
         "pagination": certs_data['pagination'],
         "message": "inValid certification data retrieved successfully"
     })
-
-
 
 
 #get records by validity date
