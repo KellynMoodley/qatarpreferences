@@ -230,39 +230,37 @@ def get_invalid_certs(query):
 
     # Start building the HTML table with inline CSS for border styling
     table_html = """
-    <style>
-    table, th, td {
-        border: 1px solid black;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 8px;
-        text-align: left;
-    }
-    </style>
-    <table>
-        <tr><th>Certificate Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>
+         <style>
+            table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+           }
+         th, td {
+           padding: 8px;
+           text-align: left;
+         }
+       </style>
+      <table>
+          <tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>
     """
 
     # Populate the table with certification data
     for cert in certs_data['certs']:
-        table_html += (
-            f"<tr><td>{html.escape(cert.employeename)}</td>"
-            f"<td>{html.escape(cert.certificatetype)}</td>"
-            f"<td>{html.escape(cert.certificatedescription)}</td>"
-            f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>"
-            f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
-        )
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td><td><a href='{html.escape(cert.certificatelink)}'>Link</a></td><td>{html.escape(str(cert.expirydate))}</td></tr>"
 
     # Close the table
     table_html += "</table>"
 
+    # Store the completed table in a variable
+    valid_certs_table = table_html
+
     # Return the table as part of a JSON response
     return jsonify({
-        "table": table_html,
+        "table": valid_certs_table,
         "pagination": certs_data['pagination'],
         "message": "Invalid certification data retrieved successfully"
     })
+
 
 
 #get records by validity date
