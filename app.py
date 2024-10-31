@@ -202,8 +202,6 @@ def get_nodate_certs(query):
         "message": "Certification data retrieved successfully"
     })
 
-
-#get records by validity date (invalid)
 @app.get('/certifications/invalid')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
@@ -226,24 +224,32 @@ def get_invalid_certs(query):
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table
-    table_html = "<table border='20'><tr><th>Name</th><th>Type</th><th>Description</th><th>Link</th><th>Expiration Date</th></tr>"
+    # Start building the HTML table with a border and headers
+    table_html = "<table border='1' style='border-collapse: collapse; width: 100%;'><tr><th>Name</th><th>Type</th><th>Description</th><th>Link</th><th>Expiration Date</th></tr>"
 
-    # Add each valid certification to the table
+    # Add each invalid certification to the table with borders around cells
     for cert in certs_data['certs']:
-        table_html += f"<tr><td><td>{html.escape(cert.employeename)}<td></td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
+        table_html += (
+            "<tr>"
+            f"<td>{html.escape(cert.employeename)}</td>"
+            f"<td>{html.escape(cert.certificatetype)}</td>"
+            f"<td>{html.escape(cert.certificatedescription)}</td>"
+            f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>"
+            f"<td>{html.escape(str(cert.expirydate))}</td>"
+            "</tr>"
+        )
 
     # Close the table
     table_html += "</table>"
 
     # Store the table in a variable
-    valid_certs_table = table_html
+    invalid_certs_table = table_html
 
     # Return the table as part of a JSON response
     return jsonify({
-        "table": valid_certs_table,
+        "table": invalid_certs_table,
         "pagination": certs_data['pagination'],
-        "message": "inValid certification data retrieved successfully"
+        "message": "Invalid certification data retrieved successfully"
     })
 
 
