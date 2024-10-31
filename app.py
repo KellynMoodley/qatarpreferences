@@ -330,7 +330,8 @@ def search_certifications_nlp(query_text, query):
         'between', 'by', 'during', 'except', 'for', 'from', 'in',
         'inside', 'into', 'like', 'near', 'next', 'of', 'off', 'on',
         'onto', 'out', 'over', 'past', 'since', 'through', 'to',
-        'toward', 'under', 'until', 'up', 'with', 'without'
+        'toward', 'under', 'until', 'up', 'with', 'without','certificates','certificate',
+        'cert','certs','show','can'
     }
     
     # Split the query text into words and filter out stop words
