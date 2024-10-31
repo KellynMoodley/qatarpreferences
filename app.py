@@ -182,13 +182,17 @@ def get_nodate_certs(query):
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+      # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
 
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
 
@@ -275,13 +279,17 @@ def get_valid_certs(query):
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
 
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
 
@@ -375,12 +383,17 @@ def search_certifications_nlp(query_text, query):
         'pagination': pagination_info
     }
 
-    # Build HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
+    # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     table_html += "</table>"
     
     return jsonify({
@@ -422,13 +435,17 @@ def get_certs_by_name(employeename, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
-    # Add each certification to the table
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
+    # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
     
@@ -479,13 +496,17 @@ def get_certs_by_keyword(tkeyword, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
 
-    # Add each matching certification to the table
+    # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
 
@@ -535,13 +556,17 @@ def get_certs_by_certtype(tcerttype, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
-    # Add each patient to the table
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
+    # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
     
@@ -595,13 +620,17 @@ def get_valid_certs_by_name(employeename, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
     
@@ -655,13 +684,17 @@ def get_invalid_certs_by_name(employeename, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
     
@@ -715,13 +748,17 @@ def get_nodate_certs_by_name(employeename, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
     
@@ -775,13 +812,17 @@ def get_certs_by_name_and_keyword(employeename,tkeyword, query):
         'pagination': pagination_info
     }
 
-    # Start building the HTML table
-    table_html = "<table border='1'><tr><th>Name</th><th>CertificateType</th><th>CertificateDescription</th><th>CertificateLink</th><th>ExpirationDate</th></tr>"
-    
+     # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
+
     # Add each valid certification to the table
     for cert in certs_data['certs']:
-        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
-    
+         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+              f"<td>{html.escape(cert.certificatetype)}</td>" \
+              f"<td>{html.escape(cert.certificatedescription)}</td>" \
+              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        
     # Close the table
     table_html += "</table>"
     
