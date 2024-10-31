@@ -210,8 +210,10 @@ def get_invalid_certs(query):
     """Get invalid certifications
     Retrieve all certification records that have expired (expiry date is before or the current date)
     """
+    # Current date for checking expiry
     current_date = datetime.now().date()
     
+    # Query to fetch expired certifications based on pagination
     pagination = CertModel.query.filter(
         CertModel.expirydate < current_date
     ).paginate(
@@ -219,35 +221,41 @@ def get_invalid_certs(query):
         per_page=query['per_page']
     )
     
+    # Organize certification data with pagination info
     certs_data = {
         'certs': pagination.items,
         'pagination': pagination_builder(pagination)
     }
 
-    # Start building the HTML table with a border and headers
-    table_html = "<table border='1' style='border-collapse: collapse; width: 100%;'><tr><th>Name</th><th>Type</th><th>Description</th><th>Link</th><th>Expiration Date</th></tr>"
+    # Start building the HTML table with inline CSS for border styling
+    table_html = """
+    <style>
+    table, th, td {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+    </style>
+    <table>
+        <tr><th>Certificate Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>
+    """
 
-    # Add each invalid certification to the table with borders around cells
+    # Populate the table with certification data
     for cert in certs_data['certs']:
-        table_html += (
-            "<tr>"
-            f"<td>{html.escape(cert.employeename)}</td>"
-            f"<td>{html.escape(cert.certificatetype)}</td>"
-            f"<td>{html.escape(cert.certificatedescription)}</td>"
-            f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>"
-            f"<td>{html.escape(str(cert.expirydate))}</td>"
-            "</tr>"
-        )
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td><td>{html.escape(cert.certificatetype)}</td><td>{html.escape(cert.certificatedescription)}</td><td>{html.escape(cert.certificatelink)}</td><td>{html.escape(str(cert.expirydate))}</td></tr>"
 
     # Close the table
     table_html += "</table>"
 
-    # Store the table in a variable
-    invalid_certs_table = table_html
+    # Store the completed table in a variable
+    valid_certs_table = table_html
 
     # Return the table as part of a JSON response
     return jsonify({
-        "table": invalid_certs_table,
+        "table": valid_certs_table,
         "pagination": certs_data['pagination'],
         "message": "Invalid certification data retrieved successfully"
     })
