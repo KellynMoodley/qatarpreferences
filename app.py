@@ -268,7 +268,8 @@ def get_valid_certs(query):
     current_date = datetime.now().date()
     
     pagination = CertModel.query.filter(
-        CertModel.expirydate > current_date
+       # CertModel.expirydate > current_date or CertModel.expirydate.is_(None)
+        or_(CertModel.expirydate > current_date, CertModel.expirydate.is_(None))
     ).paginate(
         page=query['page'],
         per_page=query['per_page']
