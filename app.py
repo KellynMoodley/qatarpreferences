@@ -269,10 +269,7 @@ def get_valid_certs(query):
     current_date = datetime.now().date()
     
     pagination = CertModel.query.filter(
-        or_(
         CertModel.expirydate > current_date,
-        CertModel.expirydate.is_(None)
-    )
     ).paginate(
         page=query['page'],
         per_page=query['per_page']
@@ -335,7 +332,7 @@ def search_certifications_nlp(query_text, query):
         'inside', 'into', 'like', 'near', 'next', 'of', 'off', 'on',
         'onto', 'out', 'over', 'past', 'since', 'through', 'to',
         'toward', 'under', 'until', 'up', 'with', 'without','certificates','certificate',
-        'cert','certs','show','can'
+        'cert','certs','show','can','valid','invalid'
     }
     
     # Split the query text into words and filter out stop words
