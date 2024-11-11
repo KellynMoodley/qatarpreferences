@@ -304,9 +304,7 @@ def get_valid_certs(query):
         "message": "Valid certification data retrieved successfully"
     })
 
-    
 
-#nlp query
 @app.get('/certifications/nlp/<string:query_text>')
 @app.output(CertOutSchema)
 @app.auth_required(auth)
@@ -319,38 +317,44 @@ def search_certifications_nlp(query_text, query):
     # List of stop words to filter out
     stop_words = {
         'i', 'want', 'to', 'search', 'the', 'for', 'a', 'and', 'or', 'of',
-        'let', 'me', 'see', 'that', 'need', 'be', 'shown',
-        'is', 'am', 'are', 'was', 'were', 'be', 'been', 'being',
-        'this', 'which', 'who', 'whom', 'what', 'where', 'when', 'why',
-        'how', 'can', 'could', 'should', 'would', 'may', 'might', 'must',
-        'has', 'have', 'had', 'do', 'does', 'did', 'just', 'only',
-        'then', 'than', 'so', 'if', 'not', 'but', 'more', 'some',
-        'all', 'any', 'each', 'few', 'more', 'most', 'same', 'other',
+        'let', 'me', 'see', 'that', 'need', 'be', 'shown', 'is', 'am', 'are',
+        'was', 'were', 'be', 'been', 'being', 'this', 'which', 'who', 'whom',
+        'what', 'where', 'when', 'why', 'how', 'can', 'could', 'should',
+        'would', 'may', 'might', 'must', 'has', 'have', 'had', 'do', 'does',
+        'did', 'just', 'only', 'then', 'than', 'so', 'if', 'not', 'but',
+        'more', 'some', 'all', 'any', 'each', 'few', 'most', 'same', 'other',
         'such', 'no', 'yes', 'now', 'about', 'above', 'after', 'again',
         'against', 'along', 'also', 'among', 'around', 'at', 'before',
-        'between', 'by', 'during', 'except', 'for', 'from', 'in',
-        'inside', 'into', 'like', 'near', 'next', 'of', 'off', 'on',
-        'onto', 'out', 'over', 'past', 'since', 'through', 'to',
-        'toward', 'under', 'until', 'up', 'with', 'without','certificates','certificate',
-        'cert','certs','show','can','valid','invalid'
+        'between', 'by', 'during', 'except', 'for', 'from', 'in', 'inside',
+        'into', 'like', 'near', 'next', 'off', 'on', 'onto', 'out', 'over',
+        'past', 'since', 'through', 'to', 'toward', 'under', 'until', 'up',
+        'with', 'without', 'certificates', 'certificate', 'cert', 'certs', 'show', 'can'
     }
-    
+
     # Split the query text into words and filter out stop words
     search_words = [word.lower() for word in query_text.split() if word.lower() not in stop_words]
-    
+
     if not search_words:
         return jsonify({
             "table": "<table border='1'><tr><th>No results</th></tr></table>",
             "message": "No valid search terms found after removing common words"
         })
 
-    # Build the query
+    # Check if the query contains 'valid' or 'invalid' to filter by date
+    today = datetime.today().date()
     base_query = CertModel.query
-    
-    # Add conditions for each search word
+
+    if 'valid' in search_words:
+        base_query = base_query.filter(CertModel.expirydate >= today)
+        search_words.remove('valid')
+    elif 'invalid' in search_words:
+        base_query = base_query.filter(CertModel.expirydate < today)
+        search_words.remove('invalid')
+
+    # Add conditions for remaining search words
     for word in search_words:
         base_query = base_query.filter(
-            (func.lower(CertModel.employeename).like(f'%{word}%'))| 
+            (func.lower(CertModel.employeename).like(f'%{word}%')) |
             (func.lower(CertModel.certificatetype).like(f'%{word}%')) |
             (func.lower(CertModel.certificatedescription).like(f'%{word}%'))
         )
@@ -385,16 +389,16 @@ def search_certifications_nlp(query_text, query):
         'pagination': pagination_info
     }
 
-     # Start building the HTML table
+    # Start building the HTML table
     table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
 
-    # Add each valid certification to the table
+    # Add each certification to the table
     for cert in certs_data['certs']:
-         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
-              f"<td>{html.escape(cert.certificatetype)}</td>" \
-              f"<td>{html.escape(cert.certificatedescription)}</td>" \
-              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
-              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
+        table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
+                      f"<td>{html.escape(cert.certificatetype)}</td>" \
+                      f"<td>{html.escape(cert.certificatedescription)}</td>" \
+                      f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
+                      f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
         
     table_html += "</table>"
     
@@ -404,6 +408,8 @@ def search_certifications_nlp(query_text, query):
         "search_terms": search_words,
         "message": f"Search results for: {query_text}"
     })
+
+
 
 #retrieve records with same name 
 @app.get('/certifications/name/<string:employeename>')
