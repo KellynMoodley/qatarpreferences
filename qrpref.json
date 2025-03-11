@@ -60,7 +60,7 @@
               "description": "health check"
           }
       },
-      "/Preferences/create": {
+      "/preferences/create": {
           "post": {
               "parameters": [],
               "responses": {
@@ -68,7 +68,7 @@
                       "content": {
                           "application/json": {
                               "schema": {
-                                  "$ref": "#/components/schemas/CertOut"
+                                  "$ref": "#/components/schemas/PreferenceOut"
                               }
                           }
                       },
@@ -101,7 +101,7 @@
                   "content": {
                       "application/json": {
                           "schema": {
-                              "$ref": "#/components/schemas/CertIn"
+                              "$ref": "#/components/schemas/PreferenceIn"
                           }
                       }
                   }
@@ -113,14 +113,14 @@
               ]
           }
       },
-      "/preferences/preferences/{preferences}": {
+      "/preferences/category/{category}": {
           "get": {
-              "summary": "Get certifications by name",
+              "summary": "Get preferences by category",
               "description": "Retrieve all preference records for a specific category",
               "parameters": [
                   {
                       "in": "path",
-                      "name": "preferences",
+                      "name": "category",
                       "schema": {
                           "type": "string"
                       },
@@ -136,7 +136,7 @@
                               "schema": {
                                   "type": "array",
                                   "items": {
-                                      "$ref": "#/components/schemas/CertOut"
+                                      "$ref": "#/components/schemas/PreferenceOut"
                                   }
                               }
                           }
@@ -208,7 +208,7 @@
               },
               "type": "object"
           },
-          "CertOut": {
+          "PreferenceOut": {
               "type": "object",
               "properties": {
                   "title": {
@@ -222,7 +222,7 @@
                   }
               }
           },
-          "CertIn": {
+          "PreferenceIn": {
               "type": "object",
               "properties": {
                   "title": {
