@@ -35,6 +35,9 @@ ENV_TABLE_ARGS=os.getenv('TABLE_ARGS')
 TABLE_ARGS=None
 if ENV_TABLE_ARGS:
     TABLE_ARGS=ast.literal_eval(ENV_TABLE_ARGS)
+else:
+    # Setting default schema based on observed table name
+    TABLE_ARGS={'schema': 'JYW20640'}
 
 
 # specify a generic SERVERS scheme for OpenAPI to allow both local testing
@@ -87,29 +90,27 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-
-# Schema for table "CERTIFICATIONS"
-# Set default schema to "CERTIFICATIONS"
-class CertModel(db.Model):
+# Schema for table "PREFERENCES"
+class PreferenceModel(db.Model):
     __tablename__ = 'PREFERENCES'
     __table_args__ = TABLE_ARGS
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column('TITLE',db.String(500))
-    link = db.Column('LINK',db.String(1000))
-    category = db.Column('CATEGORY',db.String(150))
+    title = db.Column('TITLE', db.String(500))
+    link = db.Column('LINK', db.String(1000))
+    category = db.Column('CATEGORY', db.String(150))
     
     
 
-# the Python output for Certifications
-class CertOutSchema(Schema):
+# the Python output for Preferences
+class PreferenceOutSchema(Schema):
     title = String()
     link = String()
     category = String()
 
    
 
-# the Python input for Certifications
-class CertInSchema(Schema):
+# the Python input for Preferences
+class PreferenceInSchema(Schema):
     title = String(required=True)
     link = String(required=True)
     category = String(required=True)
@@ -123,26 +124,26 @@ def verify_token(token):
     else:
         return None
 
-# Retrieve records
-@app.get('/preferences/preferences/<string:preferences>')
-@app.output(CertOutSchema(many=True))
+# Retrieve records by category
+@app.get('/preferences/category/<string:category>')
+@app.output(PreferenceOutSchema(many=True))
 @app.auth_required(auth)
-def get_certs_by_name(preferences):
-    """Get certifications by name"""
-    certs = CertModel.query.filter_by(category=preferences).all()
-    return certs
+def get_preferences_by_category(category):
+    """Get preferences by category"""
+    preferences = PreferenceModel.query.filter_by(category=category).all()
+    return preferences
 
 # Create a record
-@app.post('/Preferences/create')
-@app.input(CertInSchema, location='json')
-@app.output(CertOutSchema, 201)
+@app.post('/preferences/create')
+@app.input(PreferenceInSchema, location='json')
+@app.output(PreferenceOutSchema, 201)
 @app.auth_required(auth)
 def create_record(data):
     """Insert a new record"""
-    cert = CertModel(**data)
-    db.session.add(cert)
+    preference = PreferenceModel(**data)
+    db.session.add(preference)
     db.session.commit()
-    return cert
+    return preference
 
 
 # default "homepage", also needed for health check by Code Engine
@@ -152,11 +153,11 @@ def print_default():
     health check
     """
     # returning a dict equals to use jsonify()
-    return {'message': 'This is the certifications API server'}
+    return {'message': 'This is the preferences API server'}
 
 
 # Start the actual app
 # Get the PORT from environment or use the default
 port = os.getenv('PORT', '5000')
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=int(port))
+    app.run(host='0.0.0.0', port=int(port))
