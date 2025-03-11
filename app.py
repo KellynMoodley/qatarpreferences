@@ -1,10 +1,3 @@
-# Custom extension for IBM Watson Assistant which provides a
-# REST API around a single database table 
-#
-# The code demonstrates how a simple REST API can be developed and
-# then deployed as serverless app to IBM Cloud Code Engine.
-#
-
 
 import os
 import ast
@@ -95,20 +88,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 
-# sample records to be inserted after table recreation
-sample_certs=[
-    {
-        "employeename":"Patrick Dlamini",
-        "certificatetype":"Microsoft",
-        "certificatedescription":"Azure fundamentals: AZ-900",
-        "certificatelink": "https://learn.microsoft.com/en-us/credentials/certifications/azure-fundamentals/?practice-assessment-type=certification",
-        "expirydate":"2024-05-30",
-        
-    },
-  
-
-]
-
 
 # Schema for table "CERTIFICATIONS"
 # Set default schema to "CERTIFICATIONS"
@@ -128,8 +107,6 @@ class CertOutSchema(Schema):
     category = String()
 
    
-    
-   
 
 # the Python input for Certifications
 class CertInSchema(Schema):
@@ -137,15 +114,6 @@ class CertInSchema(Schema):
     link = String(required=True)
     category = String(required=True)
 
-    
-# use with pagination
-class CertQuerySchema(Schema):
-    page = Integer(load_default=1)
-    per_page = Integer(load_default=20, validate=Range(max=300))
-
-class CerttsOutSchema(Schema):
-    certs = List(Nested(CertOutSchema))
-    pagination = Nested(PaginationSchema)
 
 # register a callback to verify the token
 @auth.verify_token  
@@ -155,79 +123,26 @@ def verify_token(token):
     else:
         return None
 
-#retrieve records with same name 
+# Retrieve records
 @app.get('/preferences/preferences/<string:preferences>')
-@app.output(CertOutSchema)
+@app.output(CertOutSchema(many=True))
 @app.auth_required(auth)
-@app.input(CertQuerySchema, 'query')
-def get_certs_by_name(preferences, query):
-    """Get certifications by name
-    Retrieve all certification records with the specified employee name
-    """
+def get_certs_by_name(preferences):
+    """Get certifications by name"""
+    certs = CertModel.query.filter_by(category=preferences).all()
+    return certs
 
-    pagination = CertModel.query.filter(CertModel.preferences == preferences).paginate(
-        page=query['page'],
-        per_page=query['per_page']
-    )
-    def get_page_url(page):
-        return url_for('get_certs_by_name', preferences=preferences, page=page, per_page=query['per_page'], _external=True)
-
-    pagination_info = {
-        'page': pagination.page,
-        'per_page': pagination.per_page,
-        'pages': pagination.pages,
-        'total': pagination.total,
-        'current': get_page_url(pagination.page),
-        'first': get_page_url(1),
-        'last': get_page_url(pagination.pages),
-        'prev': get_page_url(pagination.prev_num) if pagination.has_prev else None,
-        'next': get_page_url(pagination.next_num) if pagination.has_next else None
-    }
-    certs_data = {
-        'certs': pagination.items,
-        'pagination': pagination_info
-    }
-
-     # Start building the HTML table
-    table_html = "<table border='4'><tr><th>Name</th><th>Certificate Type</th><th>Certificate Description</th><th>Certificate Link</th><th>Expiration Date</th></tr>"
-
-    # Add each valid certification to the table
-    for cert in certs_data['certs']:
-         table_html += f"<tr><td>{html.escape(cert.employeename)}</td>" \
-              f"<td>{html.escape(cert.certificatetype)}</td>" \
-              f"<td>{html.escape(cert.certificatedescription)}</td>" \
-              f"<td><a href='{html.escape(cert.certificatelink)}'>Link</a></td>" \
-              f"<td>{html.escape(str(cert.expirydate))}</td></tr>"
-        
-    # Close the table
-    table_html += "</table>"
-    
-    # Store the table in a variable
-    Certs_table = table_html
-    
-    # Return the table as part of a JSON response
-    return jsonify({
-        "table": Certs_table,
-        "pagination": certs_data['pagination'],
-        "message": "Certification data retrieved successfully"
-    })
-
-
-
-# create a record
+# Create a record
 @app.post('/Preferences/create')
 @app.input(CertInSchema, location='json')
 @app.output(CertOutSchema, 201)
 @app.auth_required(auth)
 def create_record(data):
-    """Insert a new record
-    Insert a new record with the given attributes. Its new ID is returned.
-    """
+    """Insert a new record"""
     cert = CertModel(**data)
     db.session.add(cert)
     db.session.commit()
     return cert
-
 
 
 # default "homepage", also needed for health check by Code Engine
