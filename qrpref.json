@@ -11,7 +11,7 @@
           "url": "https://{appname}.{projectid}.{region}.codeengine.appdomain.cloud",
           "variables": {
               "appname": {
-                  "default": "slackbot-backend",
+                  "default": "myapp",
                   "description": "application name"
               },
               "projectid": {
@@ -43,7 +43,14 @@
                   "200": {
                       "content": {
                           "application/json": {
-                              "schema": {}
+                              "schema": {
+                                  "type": "object",
+                                  "properties": {
+                                      "message": {
+                                          "type": "string"
+                                      }
+                                  }
+                              }
                           }
                       },
                       "description": "Successful response"
@@ -53,7 +60,7 @@
               "description": "health check"
           }
       },
-      "/Certifications": {
+      "/Preferences/create": {
           "post": {
               "parameters": [],
               "responses": {
@@ -106,38 +113,19 @@
               ]
           }
       },
-      
-      "/certifications/name/{employeename}": {
+      "/preferences/preferences/{preferences}": {
           "get": {
-              "summary": "Get certs by name table",
-              "description": "Retrieve all cert records in an HTML table format by name",
+              "summary": "Get certifications by name",
+              "description": "Retrieve all preference records for a specific category",
               "parameters": [
                   {
-                      "in": "query",
-                      "name": "per_page",
-                      "schema": {
-                          "type": "integer",
-                          "default": 20,
-                          "maximum": 300
-                      },
-                      "required": false
-                  },
-                  {
-                      "in": "query",
-                      "name": "page",
-                      "required": false,
-                      "schema": {
-                          "type": "integer",
-                          "default": 1
-                      }
-                  },
-                  {
                       "in": "path",
-                      "name": "employeename",
+                      "name": "preferences",
                       "schema": {
                           "type": "string"
                       },
-                      "required": true
+                      "required": true,
+                      "description": "The preference category to filter by"
                   }
               ],
               "responses": {
@@ -146,18 +134,9 @@
                       "content": {
                           "application/json": {
                               "schema": {
-                                  "type": "object",
-                                  "properties": {
-                                      "table": {
-                                          "type": "string",
-                                          "description": "HTML table containing cert data"
-                                      },
-                                      "pagination": {
-                                          "$ref": "#/components/schemas/Pagination"
-                                      },
-                                      "message": {
-                                          "type": "string"
-                                      }
+                                  "type": "array",
+                                  "items": {
+                                      "$ref": "#/components/schemas/CertOut"
                                   }
                               }
                           }
@@ -190,8 +169,8 @@
                   }
               ]
           }
-      },
-      
+      }
+  },
   "components": {
       "schemas": {
           "ValidationError": {
@@ -232,103 +211,37 @@
           "CertOut": {
               "type": "object",
               "properties": {
-                  "id": {
-                      "type": "integer"
-                  },
-                  "employeename": {
+                  "title": {
                       "type": "string"
                   },
-                  "certificatetype": {
+                  "link": {
                       "type": "string"
                   },
-                  "certificatedescription": {
+                  "category": {
                       "type": "string"
-                  },
-                  "certificatelink": {
-                      "type": "string"
-                  },
-                  "expirydate": {
-                      "type": "string",
-                      "format": "date"
-                  }
-              }
-          },
-          "CertsOut": {
-              "type": "object",
-              "properties": {
-                  "pagination": {
-                      "$ref": "#/components/schemas/Pagination"
-                  },
-                  "Certs": {
-                      "type": "array",
-                      "items": {
-                          "$ref": "#/components/schemas/CertOut"
-                      }
                   }
               }
           },
           "CertIn": {
               "type": "object",
               "properties": {
-                  "employeename": {
+                  "title": {
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 32
+                      "minLength": 1
                   },
-                  "certificatetype": {
+                  "link": {
                       "type": "string",
-                      "minLength": 0,
-                      "maxLength": 32
+                      "minLength": 1
                   },
-                  "certificatedescription": {
+                  "category": {
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 50
-                  },
-                  "certificatelink": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 1000
-                  },
-                  "expirydate": {
-                      "type": "string",
-                      "format": "date"
-                  }
-              }
-          },
-          "CertsIn": {
-              "type": "object",
-              "properties": {
-                  "employeename": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 32
-                  },
-                  "certificatetype": {
-                      "type": "string",
-                      "minLength": 0,
-                      "maxLength": 32
-                  },
-                  "certificatedescription": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 50
-                  },
-                  "certificatelink": {
-                      "type": "string",
-                      "minLength": 1,
-                      "maxLength": 1000
-                  },
-                  "expirydate": {
-                      "type": "string",
-                      "format": "date"
+                      "minLength": 1
                   }
               },
               "required": [
-                  "employeename",
-                  "certificatetype",
-                  "certificatedescription",
-                  "certificatelink"
+                  "title",
+                  "link",
+                  "category"
               ]
           }
       },
