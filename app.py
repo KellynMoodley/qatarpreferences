@@ -94,6 +94,7 @@ db = SQLAlchemy(app)
 class CertModel(db.Model):
     __tablename__ = 'PREFERENCES'
     __table_args__ = TABLE_ARGS
+    id = db.Column(db.Integer, primary_key=True)
     title = db.Column('TITLE',db.String(500))
     link = db.Column('LINK',db.String(1000))
     category = db.Column('CATEGORY',db.String(150))
