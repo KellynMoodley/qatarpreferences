@@ -133,7 +133,7 @@ def get_preferences_by_category(category):
     preferences = PreferenceModel.query.filter_by(category=category).all()
 
     # Start building the HTML table
-    table_html = "<table border='4'><tr><th>Title</th><th>Link</th></tr>"
+    table_html = "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
     
     
     # Add each preference to the table
