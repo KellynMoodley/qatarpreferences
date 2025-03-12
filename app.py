@@ -131,7 +131,42 @@ def verify_token(token):
 def get_preferences_by_category(category):
     """Get preferences by category"""
     preferences = PreferenceModel.query.filter_by(category=category).all()
-    return preferences
+    
+    # Start building the HTML table with Bootstrap styling
+    table_html = """
+    <table class="table table-striped table-bordered">
+      <thead class="thead-dark">
+        <tr>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+    """
+    
+    # Add each preference to the table
+    for pref in preferences:
+        table_html += f"""
+        <tr>
+          <td>{html.escape(pref.title)}</td>
+          <td>{html.escape(pref.category)}</td>
+          <td><a href='{html.escape(pref.link)}' target="_blank" class="btn btn-sm btn-primary">View</a></td>
+        </tr>
+        """
+        
+    # Close the table
+    table_html += """
+      </tbody>
+    </table>
+    """
+    
+    # Return all data without pagination
+    return jsonify({
+        "table": table_html,
+        "message": "Preference data retrieved successfully",
+        "total_records": len(preferences)
+    })
 
 # Create a record
 @app.post('/preferences/create')
