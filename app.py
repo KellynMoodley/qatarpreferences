@@ -131,39 +131,26 @@ def verify_token(token):
 def get_preferences_by_category(category):
     """Get preferences by category"""
     preferences = PreferenceModel.query.filter_by(category=category).all()
+
+    # Start building the HTML table
+    table_html = "<table border='4'><tr><th>Title</th><th>Link</th><th>Category</th></tr>"
     
-    # Start building the HTML table with Bootstrap styling
-    table_html = """
-    <table class="table table-striped table-bordered">
-      <thead class="thead-dark">
-        <tr>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Link</th>
-        </tr>
-      </thead>
-      <tbody>
-    """
     
     # Add each preference to the table
     for pref in preferences:
-        table_html += f"""
-        <tr>
-          <td>{html.escape(pref.title)}</td>
-          <td>{html.escape(pref.category)}</td>
-          <td><a href='{html.escape(pref.link)}' target="_blank" class="btn btn-sm btn-primary">View</a></td>
-        </tr>
-        """
+        table_html += f"<tr><td>{html.escape(pref.title)}</td>" \
+          f"<td><a href='{html.escape(pref.link)}'>Link</a></td>" \
+          f"<td>{html.escape(pref.category)}</td></tr>" 
         
     # Close the table
-    table_html += """
-      </tbody>
-    </table>
-    """
+    table_html += "</table>"
+
+    # Store the table in a variable
+    valid_pref_table = table_html
     
     # Return all data without pagination
     return jsonify({
-        "table": table_html,
+        "table": valid_pref_table,
         "message": "Preference data retrieved successfully",
         "total_records": len(preferences)
     })
