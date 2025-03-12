@@ -133,14 +133,14 @@ def get_preferences_by_category(category):
     preferences = PreferenceModel.query.filter_by(category=category).all()
 
     # Start building the HTML table
-    table_html = "<table border='4'><tr><th>Title</th><th>Link</th><th>Category</th></tr>"
+    table_html = "<table border='4'><tr><th>Title</th><th>Link</th></tr>"
     
     
     # Add each preference to the table
     for pref in preferences:
         table_html += f"<tr><td>{html.escape(pref.title)}</td>" \
-          f"<td><a href='{html.escape(pref.link)}'>Link</a></td>" \
-          f"<td>{html.escape(pref.category)}</td></tr>" 
+          f"<td><a href='{html.escape(pref.link)}'>Link</a></td></tr>" 
+
         
     # Close the table
     table_html += "</table>"
