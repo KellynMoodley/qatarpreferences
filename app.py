@@ -155,8 +155,11 @@ def get_preferences_by_category(category_list):
         
         # Generate HTML table for this category
         if category_prefs:
-            table_html = f"<h3>{html.escape(category)}</h3>"
-            table_html += "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
+            #table_html = f"<h3>{html.escape(category)}</h3>"
+            #table_html += "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
+            table_html = f"<h4 style='font-size: 14px; margin-bottom: 5px;'>{html.escape(category)}</h4>"
+            table_html += "<table border='4' style='margin-bottom: 20px;'><tr><th>Charity name</th><th>Link to website</th></tr>"
+
             
             # Add each preference to the table
             for pref in category_prefs:
