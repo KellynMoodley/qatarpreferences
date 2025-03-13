@@ -124,45 +124,52 @@ def verify_token(token):
     else:
         return None
 
-@app.get('/preferences/category/<string:category>')
+@app.get('/preferences/category/<string:category_list>')
 @app.output(PreferenceOutSchema(many=True))
 @app.auth_required(auth)
-def get_preferences_by_category(category):
-    """Get preferences by category"""
-    # Search for the category in a comma-separated list
-    preferences = PreferenceModel.query.filter(
-        PreferenceModel.category.like(f"%{category}%")
-    ).all()
-    
-    # Group preferences by their actual categories
-    categorized_prefs = {}
-    for pref in preferences:
-        # Split the categories from the database
-        pref_categories = [cat.strip() for cat in pref.category.split(',')]
-        
-        # Only include if the requested category is actually in the list
-        if category in pref_categories:
-            # Add to each matching category
-            for cat in pref_categories:
-                if cat not in categorized_prefs:
-                    categorized_prefs[cat] = []
-                categorized_prefs[cat].append(pref)
-    
-    # Generate HTML tables for each category
+def get_preferences_by_category(category_list):
+    """Get preferences by multiple categories (comma-separated)"""
+    # Split the input categories
+    categories = [cat.strip() for cat in category_list.split(',')]
+    all_preferences = []
     result_tables = {}
-    for cat, cat_prefs in categorized_prefs.items():
-        # Start building the HTML table
-        table_html = f"<h3>{html.escape(cat)}</h3>"
-        table_html += "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
+    
+    # Query each category separately
+    for category in categories:
+        # Search for the category in the database
+        preferences = PreferenceModel.query.filter(
+            PreferenceModel.category.like(f"%{category}%")
+        ).all()
         
-        # Add each preference to the table
-        for pref in cat_prefs:
-            table_html += f"<tr><td>{html.escape(pref.title)}</td>" \
-                f"<td><a href='{html.escape(pref.link)}'>Link</a></td></tr>"
+        # Process preferences for this category
+        category_prefs = []
+        for pref in preferences:
+            # Split the categories from the database
+            pref_categories = [cat.strip() for cat in pref.category.split(',')]
             
-        # Close the table
-        table_html += "</table>"
-        result_tables[cat] = table_html
+            # Only include if the requested category is actually in the list
+            if category in pref_categories:
+                category_prefs.append(pref)
+        
+        # Generate HTML table for this category
+        if category_prefs:
+            # Start building the HTML table
+            table_html = f"<h3>{html.escape(category)}</h3>"
+            table_html += "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
+            
+            # Add each preference to the table
+            for pref in category_prefs:
+                table_html += f"<tr><td>{html.escape(pref.title)}</td>" \
+                    f"<td><a href='{html.escape(pref.link)}'>Link</a></td></tr>"
+                
+            # Close the table
+            table_html += "</table>"
+            result_tables[category] = table_html
+            
+            # Add to all preferences list (without duplicates)
+            for pref in category_prefs:
+                if pref not in all_preferences:
+                    all_preferences.append(pref)
     
     # Combine all tables into one response
     all_tables_html = "".join(result_tables.values())
@@ -171,10 +178,9 @@ def get_preferences_by_category(category):
     return jsonify({
         "table": all_tables_html,
         "message": "Preference data retrieved successfully",
-        "total_records": len(preferences),
+        "total_records": len(all_preferences),
         "categories_found": list(result_tables.keys())
     })
-
 # Create a record
 @app.post('/preferences/create')
 @app.input(PreferenceInSchema, location='json')
