@@ -129,13 +129,15 @@ def verify_token(token):
 @app.auth_required(auth)
 def get_preferences_by_category(category_list):
     """Get preferences by multiple categories (comma-separated)"""
+    import html  # Ensure html.escape is available
+    
     # Split the input categories
     categories = [cat.strip() for cat in category_list.split(',')]
     all_preferences = []
-    result_tables = {}
+    result_tables = []
     
     # Query each category separately
-    for category in categories:
+    for idx, category in enumerate(categories):  # Using idx for uniqueness
         # Search for the category in the database
         preferences = PreferenceModel.query.filter(
             PreferenceModel.category.like(f"%{category}%")
@@ -153,7 +155,6 @@ def get_preferences_by_category(category_list):
         
         # Generate HTML table for this category
         if category_prefs:
-            # Start building the HTML table
             table_html = f"<h3>{html.escape(category)}</h3>"
             table_html += "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
             
@@ -164,7 +165,7 @@ def get_preferences_by_category(category_list):
                 
             # Close the table
             table_html += "</table>"
-            result_tables[category] = table_html
+            result_tables.append(table_html)  # Append instead of using a dict
             
             # Add to all preferences list (without duplicates)
             for pref in category_prefs:
@@ -172,15 +173,16 @@ def get_preferences_by_category(category_list):
                     all_preferences.append(pref)
     
     # Combine all tables into one response
-    all_tables_html = "".join(result_tables.values())
+    all_tables_html = "".join(result_tables)
     
     # Return all data without pagination
     return jsonify({
         "table": all_tables_html,
         "message": "Preference data retrieved successfully",
         "total_records": len(all_preferences),
-        "categories_found": list(result_tables.keys())
+        "categories_found": categories
     })
+
 # Create a record
 @app.post('/preferences/create')
 @app.input(PreferenceInSchema, location='json')
