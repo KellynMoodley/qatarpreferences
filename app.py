@@ -153,18 +153,17 @@ def get_preferences_by_category(category_list):
             if category in pref_categories:
                 category_prefs.append(pref)
         
-        # Generate HTML table for this category
-        if category_prefs:
-            #table_html = f"<h3>{html.escape(category)}</h3>"
-            #table_html += "<table border='4'><tr><th>Charity name</th><th>Link to website</th></tr>"
-            table_html = f"<h4 style='font-size: 16px; font-weight: bold; margin-bottom: 5px;'>{html.escape(category)}</h4>"
-            table_html += "<table border='4' style='margin-bottom: 50px;'><tr><th>Charity name</th><th>Link to website</th></tr>"
-
+            # Generate HTML table for this category
+            if category_prefs:
+               table_html = f"<h4 style='font-size: 16px; font-weight: bold; margin-bottom: 5px;'>{html.escape(category)}</h4>"
+               table_html += "<table style='border-collapse: collapse; margin-bottom: 50px;'><tr><th style='border: 1px solid pink; padding: 8px;'>Charity name</th><th style='border: 1px solid pink; padding: 8px;'>Link to website</th></tr>"
+    
+          # Add each preference to the table
+           for pref in category_prefs:
+               table_html += f"<tr><td style='border: 1px solid pink; padding: 8px;'>{html.escape(pref.title)}</td>" \
+               f"<td style='border: 1px solid pink; padding: 8px;'><a href='{html.escape(pref.link)}'>Link</a></td></tr>"
             
-            # Add each preference to the table
-            for pref in category_prefs:
-                table_html += f"<tr><td>{html.escape(pref.title)}</td>" \
-                    f"<td><a href='{html.escape(pref.link)}'>Link</a></td></tr>"
+    
                 
             # Close the table
             table_html += "</table>"
